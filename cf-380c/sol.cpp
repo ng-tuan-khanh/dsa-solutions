@@ -4,17 +4,17 @@
 
 using namespace std;
 
-class TreeNode {
+class STNode {
 public:
     int optimal = 0;
     int open = 0;
     int close = 0;
-    TreeNode() = default;
-    TreeNode(int _optimal, int _open, int _close)
+    STNode() = default;
+    STNode(int _optimal, int _open, int _close)
         : optimal(_optimal), open(_open), close(_close) {}
 
-    TreeNode operator+(TreeNode const& r) {
-        TreeNode res;
+    STNode operator+(STNode const& r) {
+        STNode res;
         int numMatch = min(open, r.close);
         res.optimal = optimal + r.optimal + numMatch * 2;
         res.open = open + r.open - numMatch;
@@ -23,21 +23,21 @@ public:
     }
 };
 
-class BracketSeq {
+class ST {
 private:
     int _n = 0;
-    vector<TreeNode>_tree;
+    vector<STNode>_tree;
 
 
 public:
-    BracketSeq(const string& s) {
+    ST(const string& s) {
         int n = s.size(), i = 0;
         while (n != 0) {
             n >>= 1;
             ++i;
         }
         _n = 1 << i;
-        _tree.resize(2 * _n, TreeNode());
+        _tree.resize(2 * _n, STNode());
         for (int i = 0; i < s.size(); ++i) {
             update(i, s[i]);
         }
@@ -47,8 +47,8 @@ public:
     void update(int k, char c) {
         k += _n;
 
-        if (c == '(') _tree[k] = TreeNode(0, 1, 0);
-        else _tree[k] = TreeNode(0, 0, 1);
+        if (c == '(') _tree[k] = STNode(0, 1, 0);
+        else _tree[k] = STNode(0, 0, 1);
 
         for (k /= 2; k >= 1; k /= 2) {
             _tree[k] = _tree[2 * k] + _tree[2 * k + 1];
@@ -56,8 +56,8 @@ public:
     }
 
     // Range queries (top down)
-    TreeNode range(int l, int r, int k, int x, int y) {
-        if (l > y || r < x) return TreeNode();
+    STNode range(int l, int r, int k, int x, int y) {
+        if (l > y || r < x) return STNode();
         if (x >= l && y <= r) return _tree[k];
         // The middle is always left-skewed, as _n is power of 2 -> length[x, m] == length[m + 1, y]
         int m = (x + y) / 2;
@@ -72,7 +72,7 @@ public:
 int main() {
     string s; cin >> s;
     int n; cin >> n;
-    BracketSeq seq(s);
+    ST seq(s);
 
     vector<int>inp;
     for (int i = 0; i < n; ++i) {
