@@ -3,35 +3,25 @@
 
 using namespace std;
 
-string bin(int n) {
-    string res;
-    for (int i = 31; i >= 0; --i) {
-        if (n & (1 << i)) res += '1';
-        else res += '0';
-    }
-    return res;
-}
-
-// 101 -> 3 + 2 + 2
+#define ll long long 
 
 int main() {
-    unsigned long long n, res = 0;
-    n = 10;
-    for (int i = 0; n >= (1 << i); ++i) {
-        unsigned long long parts, r = 0;
+    ll n, res = 0;
+    cin >> n;
+    for (int i = 0; n >> i; ++i) {
+        ll setBits, r = 0;
         // ith bit = 1
-        // 1011 -> 10x1 -> 101 -> +1
-        if (n & (1 << i)) {
-            r = (n & ~(-1 << i));
-            parts = ((n >> 1) & (-1 << i) | r) + 1;
+        // e.g., 1011 -> 10x1 -> 101 -> +1 because 000 is still valid
+        if (n & (1LL << i)) {
+            r = (n & ~(-1LL << i));
+            setBits = ((n >> 1) & (-1LL << i) | r) + 1;
         }
         // ith bit = 0
-        // 11000101 -> 110x0101 -> 1100000 -> 1011111 -> +1
+        // e.g., 11000101 -> 110x0101 -> 1100000 -> 1011111 -> +1 because 0000000 is still valid
         else {
-            parts = ((n >> 1) & (-1 << i)) - 1 + 1;
+            setBits = (((n >> 1) & (-1LL << i)) - 1) + 1;
         }
-        cout << parts << ' ' << bin(r) << '\n';
-        res += parts;
+        res += setBits;
     }
     cout << res;
 
